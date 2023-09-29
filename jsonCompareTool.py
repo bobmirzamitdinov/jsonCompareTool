@@ -37,6 +37,12 @@ def compare_json_objects(obj1, obj2, path=""):
 
     return differences
 
+def list_columns(differences):
+    columns = set()
+    for diff in differences:
+        columns.add(diff[0])  # Extracting the path (column name)
+    return columns
+
 def main():
     file1 = 'before.json'
     file2 = 'after.json'
@@ -44,7 +50,7 @@ def main():
     differences = compare_json_files(file1, file2)
 
     if not differences:
-        print("The JSON files have the same structure and content.")
+        print("No differences found")
     else:
         print("Differences found:")
         table = PrettyTable()
@@ -52,6 +58,15 @@ def main():
         for diff in differences:
             table.add_row(diff)
         print(table)
+
+        # List unique columns (paths)
+        columns = list_columns(differences)
+        print("\nColumns in the differences:")
+        for column in columns:
+            for diff in differences:
+                if diff[0] == column and diff[3] == "Different":
+                    print(column)
+                    break
 
 if __name__ == "__main__":
     main()
