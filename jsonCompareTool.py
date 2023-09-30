@@ -1,4 +1,5 @@
 import json
+import csv
 from prettytable import PrettyTable
 
 def compare_json_files(file1, file2):
@@ -58,6 +59,14 @@ def main():
         for diff in differences:
             table.add_row(diff)
         print(table)
+
+        csv_filename = "differences.csv"
+        with open(csv_filename, 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerow(["Path", "Before", "After", "Difference"])
+            for diff in differences:
+                csv_writer.writerow(diff)
+        print(f"Differences saved to {csv_filename}")
 
         # List unique columns (paths)
         columns = list_columns(differences)
