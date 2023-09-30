@@ -55,18 +55,19 @@ def main():
     else:
         print("Differences found:")
         table = PrettyTable()
-        table.field_names = ["Path", "Before", "After", "Difference"]
+        table.field_names = ["Column", "Before", "After", "Difference"]
         for diff in differences:
             table.add_row(diff)
         print(table)
 
+        # Save results into csv
         csv_filename = "differences.csv"
         with open(csv_filename, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
-            csv_writer.writerow(["Path", "Before", "After", "Difference"])
+            csv_writer.writerow(["Column", "Before", "After", "Difference"])
             for diff in differences:
                 csv_writer.writerow(diff)
-        print(f"Differences saved to {csv_filename}")
+        print(f"Comparison results has been saved to {csv_filename}")
 
         # List unique columns (paths)
         columns = list_columns(differences)
