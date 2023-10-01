@@ -1,9 +1,39 @@
-Column,Before,After,Difference
-timestamp,2023-09-26T11:30:45Z,2023-09-26T11:30:45Z,Same
-symbol,GOOGL,GOOGL,Same
-action,BUY,SELL,Different
-quantity,100,50,Different
-price,2800.75,2800.75,Same
-order_id,67890,67890,Same
-trade_id,T1002,T1002,Same
-user_id,user456,user456,Same
+Destination,Before,After,Status
+tradeReport.reportDate,2023-10-01T15:30:00Z,2023-10-01T15:30:00Z,Same
+tradeReport.reportingParty,111,111,Same
+tradeReport.trades[0].tradeId,123456,123456,Same
+tradeReport.trades[0].tradeDate,2023-10-01T10:15:00Z,2023-10-01T10:15:00Z,Same
+tradeReport.trades[0].symbol,AAPL,AAPL,Same
+tradeReport.trades[0].quantity,500,100,Different
+tradeReport.trades[0].price,150.5,150.5,Same
+tradeReport.trades[0].counterparty,111,111,Same
+tradeReport.trades[0].instrument.assetClass,Equity,Equity,Same
+tradeReport.trades[0].instrument.securityType,Common Stock,Common Stock,Same
+tradeReport.trades[0].instrument.issuer,Apple Inc.,Apple Inc.,Same
+tradeReport.trades[0].instrument.currency,CAD,USD,Different
+tradeReport.trades[0].instrument.exchange,NASDAQ,NASDAQ,Same
+tradeReport.trades[0].instrument.marketSector,Technology,Technology,Same
+tradeReport.trades[0].entity.entityName,111,111,Same
+tradeReport.trades[0].entity.entityType,Counterparty,Counterparty,Same
+tradeReport.trades[0].entity.location,New York,New York,Same
+tradeReport.trades[0].entity.contact.contactName,John Doe,John Doe,Same
+tradeReport.trades[0].entity.contact.contactEmail,john.doe@counterpartyx.com,john.doe@counterpartyx.com,Same
+tradeReport.trades[0].entity.contact.contactPhone,+1 (123) 456-7890,+1 (123) 456-7890,Same
+tradeReport.trades[1].tradeId,789012,789012,Same
+tradeReport.trades[1].tradeDate,2023-10-01T11:45:00Z,2023-10-01T11:45:00Z,Same
+tradeReport.trades[1].symbol,GOOG,GOOG,Same
+tradeReport.trades[1].quantity,50,50,Same
+tradeReport.trades[1].price,2700.25,3000.25,Different
+tradeReport.trades[1].counterparty,111,555,Different
+tradeReport.trades[1].instrument.assetClass,Equity,Equity,Same
+tradeReport.trades[1].instrument.securityType,Common Stock,Common Stock,Same
+tradeReport.trades[1].instrument.issuer,Alphabet Inc.,Alphabet Inc.,Same
+tradeReport.trades[1].instrument.currency,USD,USD,Same
+tradeReport.trades[1].instrument.exchange,NASDAQ,NASDAQ,Same
+tradeReport.trades[1].instrument.marketSector,Technology,Technology,Same
+tradeReport.trades[1].entity.entityName,111,555,Different
+tradeReport.trades[1].entity.entityType,Counterparty,Counterparty,Same
+tradeReport.trades[1].entity.location,San Francisco,Chicago,Different
+tradeReport.trades[1].entity.contact.contactName,Jane Smith,Jane Smith,Same
+tradeReport.trades[1].entity.contact.contactEmail,jane.smith@counterpartyy.com,jane.smith@counterpartyy.com,Same
+tradeReport.trades[1].entity.contact.contactPhone,+1 (987) 654-3210,+1 (987) 654-3210,Same

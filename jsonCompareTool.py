@@ -20,13 +20,13 @@ def compare_json_objects(obj1, obj2, path=""):
 
     if isinstance(obj1, dict):
         if set(obj1.keys()) != set(obj2.keys()):
-            differences.append((path, json.dumps(obj1), json.dumps(obj2), "Different"))
+            differences.append((path, json.dumps(obj1), json.dumps(obj2), "Status"))
         for key in obj1:
             new_path = f"{path}.{key}" if path else key
             differences.extend(compare_json_objects(obj1[key], obj2[key], new_path))
     elif isinstance(obj1, list):
         if len(obj1) != len(obj2):
-            differences.append((path, json.dumps(obj1), json.dumps(obj2), "Different"))
+            differences.append((path, json.dumps(obj1), json.dumps(obj2), "Status"))
         for i, (item1, item2) in enumerate(zip(obj1, obj2)):
             new_path = f"{path}[{i}]"
             differences.extend(compare_json_objects(item1, item2, new_path))
@@ -53,9 +53,9 @@ def main():
     if not differences:
         print("No differences found")
     else:
-        print("Differences found:")
+        print("Comparison Results:")
         table = PrettyTable()
-        table.field_names = ["Column", "Before", "After", "Difference"]
+        table.field_names = ["Destination", "Before", "After", "Status"]
         for diff in differences:
             table.add_row(diff)
         print(table)
@@ -64,14 +64,14 @@ def main():
         csv_filename = "differences.csv"
         with open(csv_filename, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
-            csv_writer.writerow(["Column", "Before", "After", "Difference"])
+            csv_writer.writerow(["Destination", "Before", "After", "Status"])
             for diff in differences:
                 csv_writer.writerow(diff)
-        print(f"Comparison results has been saved to {csv_filename}")
+        print(f"Comparison results have been saved to {csv_filename}")
 
         # List unique columns (paths)
         columns = list_columns(differences)
-        print("\nColumns in the differences:")
+        print("\nDestinations in the differences:")
         for column in columns:
             for diff in differences:
                 if diff[0] == column and diff[3] == "Different":
