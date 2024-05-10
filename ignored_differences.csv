@@ -1,6 +1,6 @@
 Sequence Number,Destinations,Old,New,Status
-10|ABC,tradeReport.trades[0].tradeId,123457,123456,Expected Difference
-10|ABC,tradeReport.trades[1].tradeId,789012,789012,Expected Difference
+11|ABC,tradeReport.trades[0].tradeId,123457,123456,Expected Difference
+11|ABC,tradeReport.trades[1].tradeId,789012,789012,Expected Difference
 5|ABC,tradeReport.trades[0].tradeId,123456,123456,Expected Difference
 5|ABC,tradeReport.trades[1].tradeId,789012,789012,Expected Difference
 6|ABG,tradeReport.trades[0].tradeId,123456,123456,Expected Difference

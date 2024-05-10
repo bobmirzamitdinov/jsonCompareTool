@@ -1,4 +1,4 @@
 Sequence Number,Destinations,Old,New,Status
+5|ABC,tradeReport.reportingParty,950,600,Different
 5|ABC,tradeReport.trades[1].entity.contact.contactPhone,+1 (987) 655-3210,+1 (987) 654-3210,Different
-5|ABC,tradeReport.reportingParty,700,500,Different
 6|ABG,tradeReport.reportingParty,120,109,Different
