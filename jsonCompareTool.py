@@ -2,81 +2,97 @@ import json
 import csv
 from prettytable import PrettyTable
 
-def compare_json_files(file1, file2):
+def compare_json_files(file1, file2, sort_key, ignore_keys):
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
-        json_data1 = json.load(f1)
-        json_data2 = json.load(f2)
+        json_data1 = json.load(f1)  # Expecting a list of JSON objects
+        json_data2 = json.load(f2)  # Expecting a list of JSON objects
 
-    differences = compare_json_objects(json_data1, json_data2)
+    # Sort data by using a default value that sorts properly if key is missing
+    json_data1.sort(key=lambda x: x.get('tradeReport', {}).get(sort_key, float('inf')))
+    json_data2.sort(key=lambda x: x.get('tradeReport', {}).get(sort_key, float('inf')))
 
-    return differences
-
-def compare_json_objects(obj1, obj2, path=""):
     differences = []
+    ignored_differences = []
+    # Ensure both files have the same number of JSON objects
+    if len(json_data1) != len(json_data2):
+        raise ValueError("The number of JSON objects in each file does not match.")
 
-    if type(obj1) != type(obj2):
-        differences.append((path, str(obj1), str(obj2), "Different"))
-        return differences
+    for obj1, obj2 in zip(json_data1, json_data2):
+        sequence_number = obj1.get('tradeReport', {}).get(sort_key, 'N/A')
+        diffs, ignored = compare_json_objects(obj1, obj2, ignore_keys, sequence_number=sequence_number)
+        differences.extend(diffs)
+        ignored_differences.extend(ignored)
 
-    if isinstance(obj1, dict):
-        if set(obj1.keys()) != set(obj2.keys()):
-            differences.append((path, json.dumps(obj1), json.dumps(obj2), "Status"))
-        for key in obj1:
+    return differences, ignored_differences
+
+def compare_json_objects(obj1, obj2, ignore_keys, path="", sequence_number='N/A'):
+    differences = []
+    ignored_differences = []
+
+    if isinstance(obj1, dict) and isinstance(obj2, dict):
+        for key in set(obj1.keys()).union(obj2.keys()):
+            if key in ignore_keys:
+                ignored_differences.append((sequence_number, path + '.' + key if path else key, str(obj1.get(key)), str(obj2.get(key)), "Expected Difference"))
+                continue
             new_path = f"{path}.{key}" if path else key
-            differences.extend(compare_json_objects(obj1[key], obj2[key], new_path))
-    elif isinstance(obj1, list):
-        if len(obj1) != len(obj2):
-            differences.append((path, json.dumps(obj1), json.dumps(obj2), "Status"))
+            diffs, ignored = compare_json_objects(obj1.get(key), obj2.get(key), ignore_keys, new_path, sequence_number)
+            differences.extend(diffs)
+            ignored_differences.extend(ignored)
+    elif isinstance(obj1, list) and isinstance(obj2, list):
         for i, (item1, item2) in enumerate(zip(obj1, obj2)):
             new_path = f"{path}[{i}]"
-            differences.extend(compare_json_objects(item1, item2, new_path))
+            diffs, ignored = compare_json_objects(item1, item2, ignore_keys, new_path, sequence_number)
+            differences.extend(diffs)
+            ignored_differences.extend(ignored)
     else:
         if obj1 != obj2:
-            differences.append((path, str(obj1), str(obj2), "Different"))
-        else:
-            differences.append((path, str(obj1), str(obj2), "Same"))
+            differences.append((sequence_number, path, str(obj1), str(obj2), "Different"))
 
-    return differences
-
-def list_columns(differences):
-    columns = set()
-    for diff in differences:
-        columns.add(diff[0])  # Extracting the path (column name)
-    return columns
+    return differences, ignored_differences
 
 def main():
-    file1 = 'before.json'
-    file2 = 'after.json'
+    file1 = 'old.json'
+    file2 = 'new.json'
+    sort_key = "sequenceNumber"  # Make sure this matches the actual key in your JSON
+    ignore_keys_input = input("Enter keys to ignore in the comparison (comma separated): ")
+    ignore_keys = {key.strip() for key in ignore_keys_input.split(',')}
 
-    differences = compare_json_files(file1, file2)
+    differences, ignored_differences = compare_json_files(file1, file2, sort_key, ignore_keys)
 
-    if not differences:
-        print("No differences found")
+    if not differences and not ignored_differences:
+        print("No differences found.")
     else:
-        print("Comparison Results:")
-        table = PrettyTable()
-        table.field_names = ["Destination", "Before", "After", "Status"]
-        for diff in differences:
-            table.add_row(diff)
-        print(table)
+        if differences:
+            print("Comparison Results:")
+            table = PrettyTable()
+            table.field_names = ["Sequence Number", "Destinations", "Old", "New", "Status"]
+            for diff in differences:
+                table.add_row(diff)
+            print(table)
 
-        # Save results into csv
+        if ignored_differences:
+            print("Ignored Differences:")
+            ignored_table = PrettyTable()
+            ignored_table.field_names = ["Sequence Number", "Destinations", "Old", "New", "Status"]
+            for diff in ignored_differences:
+                ignored_table.add_row(diff)
+            print(ignored_table)
+
+        # Save results into CSV
         csv_filename = "differences.csv"
+        ignored_csv_filename = "ignored_differences.csv"
         with open(csv_filename, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
-            csv_writer.writerow(["Destination", "Before", "After", "Status"])
+            csv_writer.writerow(["Sequence Number", "Destinations", "Old", "New", "Status"])
             for diff in differences:
                 csv_writer.writerow(diff)
+        with open(ignored_csv_filename, 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerow(["Sequence Number", "Destinations", "Old", "New", "Status"])
+            for diff in ignored_differences:
+                csv_writer.writerow(diff)
         print(f"Comparison results have been saved to {csv_filename}")
-
-        # List unique columns (paths)
-        columns = list_columns(differences)
-        print("\nDestinations in the differences:")
-        for column in columns:
-            for diff in differences:
-                if diff[0] == column and diff[3] == "Different":
-                    print(column)
-                    break
+        print(f"Ignored differences have been saved to {ignored_csv_filename}")
 
 if __name__ == "__main__":
     main()
