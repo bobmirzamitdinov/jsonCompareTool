@@ -1,8 +1,6 @@
 # jsonCompareTool (Python)
 
 **jsonCompareTool** is a Python command-line utility designed for comparing large JSON datasets contained in two separate files, `old.json` and `new.json`.It effectively highlights differences and optionally ignores specified discrepancies, presenting results in clear, tabular format
-This is test message
-
 
 ## Table of Contents
 - [Features](#features)
